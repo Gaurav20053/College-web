@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Student Marks Form</title>
+  <title>Student Management</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -16,6 +16,7 @@
       margin-top: 20px;
       padding: 10px;
       border: 1px solid #ccc;
+      background: #f9f9f9;
     }
   </style>
 </head>
@@ -29,7 +30,6 @@
   <button onclick="addStudent()">Add Student</button>
   
   <br><br>
-  
   <button onclick="showAll()">Show All Students</button>
   <button onclick="showPassed()">Show Passed Students</button>
   <button onclick="calculateAverage()">Calculate Average Marks</button>
@@ -38,51 +38,44 @@
   <div class="output" id="output"></div>
   
   <script>
+    // Empty array for students
     let students = [];
 
+    // Function to add student object into the array
     function addStudent() {
       let name = document.getElementById("studentName").value.trim();
       let marks = parseFloat(document.getElementById("studentMarks").value);
-      
+
       if (name === "" || isNaN(marks)) {
         alert("Please enter valid details!");
         return;
       }
-      
+
       students.push({ name, marks });
       alert("Student Added!");
-      
+
+      // Clear input fields
       document.getElementById("studentName").value = "";
       document.getElementById("studentMarks").value = "";
     }
 
+    // ✅ map() -> Show all students
     function showAll() {
       if (students.length === 0) {
-        document.getElementById("output").innerHTML = "No students added yet.";
+        document.getElementById("output").innerHTML = "No students available.";
         return;
       }
-      let result = "<h3>All Students:</h3><ul>";
-      students.forEach(s => {
-        result += `<li>${s.name} - ${s.marks}</li>`;
-      });
-      result += "</ul>";
-      document.getElementById("output").innerHTML = result;
+      let list = students.map(s => `${s.name}: ${s.marks}`).join("<br>");
+      document.getElementById("output").innerHTML = "<h3>All Students:</h3>" + list;
     }
 
+    // ✅ filter() with callback
     function showPassed() {
       let passed = students.filter(s => s.marks >= 40);
-      if (passed.length === 0) {
-        document.getElementById("output").innerHTML = "No students passed.";
-        return;
-      }
-      let result = "<h3>Passed Students:</h3><ul>";
-      passed.forEach(s => {
-        result += `<li>${s.name} - ${s.marks}</li>`;
-      });
-      result += "</ul>";
-      document.getElementById("output").innerHTML = result;
+      displayResult(passed, "Passed Students");
     }
 
+    // ✅ reduce() with callback
     function calculateAverage() {
       if (students.length === 0) {
         document.getElementById("output").innerHTML = "No data available.";
@@ -90,16 +83,31 @@
       }
       let total = students.reduce((sum, s) => sum + s.marks, 0);
       let avg = (total / students.length).toFixed(2);
-      document.getElementById("output").innerHTML = `<h3>Average Marks: ${avg}</h3>`;
+      showAverage(avg);
     }
 
+    // ✅ Normal function -> Find topper
     function findTopper() {
       if (students.length === 0) {
         document.getElementById("output").innerHTML = "No data available.";
         return;
       }
       let topper = students.reduce((prev, curr) => (curr.marks > prev.marks ? curr : prev));
-      document.getElementById("output").innerHTML = `<h3>Topper: ${topper.name} - ${topper.marks}</h3>`;
+      document.getElementById("output").innerHTML = `<h3>Topper:</h3> ${topper.name} - ${topper.marks}`;
+    }
+
+    // --- Callback functions ---
+    function displayResult(arr, title) {
+      if (arr.length === 0) {
+        document.getElementById("output").innerHTML = `${title}: None`;
+        return;
+      }
+      let list = arr.map(s => `${s.name}: ${s.marks}`).join("<br>");
+      document.getElementById("output").innerHTML = `<h3>${title}:</h3>` + list;
+    }
+
+    function showAverage(avg) {
+      document.getElementById("output").innerHTML = `<h3>Average Marks:</h3> ${avg}`;
     }
   </script>
 </body>
