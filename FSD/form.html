@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Student Marks Form</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+    input, button {
+      margin: 5px;
+      padding: 6px;
+    }
+    .output {
+      margin-top: 20px;
+      padding: 10px;
+      border: 1px solid #ccc;
+    }
+  </style>
+</head>
+<body>
+  <h2>Student Marks Management</h2>
+  
+  <label>Student Name:</label>
+  <input type="text" id="studentName" placeholder="Enter name">
+  <label>Marks:</label>
+  <input type="number" id="studentMarks" placeholder="Enter marks">
+  <button onclick="addStudent()">Add Student</button>
+  
+  <br><br>
+  
+  <button onclick="showAll()">Show All Students</button>
+  <button onclick="showPassed()">Show Passed Students</button>
+  <button onclick="calculateAverage()">Calculate Average Marks</button>
+  <button onclick="findTopper()">Find Topper</button>
+  
+  <div class="output" id="output"></div>
+  
+  <script>
+    let students = [];
+
+    function addStudent() {
+      let name = document.getElementById("studentName").value.trim();
+      let marks = parseFloat(document.getElementById("studentMarks").value);
+      
+      if (name === "" || isNaN(marks)) {
+        alert("Please enter valid details!");
+        return;
+      }
+      
+      students.push({ name, marks });
+      alert("Student Added!");
+      
+      document.getElementById("studentName").value = "";
+      document.getElementById("studentMarks").value = "";
+    }
+
+    function showAll() {
+      if (students.length === 0) {
+        document.getElementById("output").innerHTML = "No students added yet.";
+        return;
+      }
+      let result = "<h3>All Students:</h3><ul>";
+      students.forEach(s => {
+        result += `<li>${s.name} - ${s.marks}</li>`;
+      });
+      result += "</ul>";
+      document.getElementById("output").innerHTML = result;
+    }
+
+    function showPassed() {
+      let passed = students.filter(s => s.marks >= 40);
+      if (passed.length === 0) {
+        document.getElementById("output").innerHTML = "No students passed.";
+        return;
+      }
+      let result = "<h3>Passed Students:</h3><ul>";
+      passed.forEach(s => {
+        result += `<li>${s.name} - ${s.marks}</li>`;
+      });
+      result += "</ul>";
+      document.getElementById("output").innerHTML = result;
+    }
+
+    function calculateAverage() {
+      if (students.length === 0) {
+        document.getElementById("output").innerHTML = "No data available.";
+        return;
+      }
+      let total = students.reduce((sum, s) => sum + s.marks, 0);
+      let avg = (total / students.length).toFixed(2);
+      document.getElementById("output").innerHTML = `<h3>Average Marks: ${avg}</h3>`;
+    }
+
+    function findTopper() {
+      if (students.length === 0) {
+        document.getElementById("output").innerHTML = "No data available.";
+        return;
+      }
+      let topper = students.reduce((prev, curr) => (curr.marks > prev.marks ? curr : prev));
+      document.getElementById("output").innerHTML = `<h3>Topper: ${topper.name} - ${topper.marks}</h3>`;
+    }
+  </script>
+</body>
+</html>
